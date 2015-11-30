@@ -37,6 +37,9 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
 public class MainActivity extends Activity {
+
+    private static String FLASHPICK_SERVER_ADDRESS = System.getenv("FLASHPICK_SERVER_ADDRESS");
+
     CallbackManager callbackManager;
     AccessTokenTracker accessTokenTracker;
     AccessToken accessToken;
@@ -139,7 +142,7 @@ public class MainActivity extends Activity {
 
         RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
         //TODO: sparametryzować adres. Tu trzeba podać adres ip maszyny, na której uruchomiony jest serwer
-        String url ="http://178.235.6.245:8080/flashpick-server-services-ws/mobileFBAuth?accessToken=" + AccessToken.getCurrentAccessToken().getToken();
+        String url = FLASHPICK_SERVER_ADDRESS + "flashpick-server-services-ws/mobileFBAuth?accessToken=" + AccessToken.getCurrentAccessToken().getToken();
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
             @Override
@@ -180,8 +183,7 @@ public class MainActivity extends Activity {
 
     public void sendGreetingRequest(View v) {
         RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
-        //TODO: sparametryzować adres. Tu trzeba podać adres ip maszyny, na której uruchomiony jest serwer
-        String url ="http://178.235.6.245:8080/flashpick-server-services-ws/greeting";
+        String url = FLASHPICK_SERVER_ADDRESS + "flashpick-server-services-ws/greeting";
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
             @Override
