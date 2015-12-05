@@ -2,42 +2,41 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context="co.flashpick.client.android.MainActivity" >
+                tools:context="co.flashpick.client.android.MainActivity"
+                android:id="@+id/mainActivity">
 
-    <Button
-            android:id="@+id/button1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/loginButton1"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="17dp"
-            android:onClick="sendGreetingRequest"
-            android:text="Wywołaj serwer" />
-
-    <com.facebook.login.widget.LoginButton
-            android:id="@+id/loginButton1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="100px"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="25dp"
-            android:text="LoginButton" />
-
-    <EditText
-            android:id="@+id/editText1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/button1"
-            android:layout_marginTop="15dp"
-            android:ems="10"
-            android:enabled="false"
-            android:gravity="center_vertical|center_horizontal"
-            android:text="Response from the server:" >
+            android:layout_alignParentStart="true"
+            android:id="@+id/linearLayout">
 
-        <requestFocus />
-    </EditText>
+        <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:id="@+id/facebookScreenButton"
+                android:src="@mipmap/ic_launcher"/>
+
+        <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:id="@+id/mainScreenButton"
+                android:src="@mipmap/ic_launcher"/>
+
+    </LinearLayout>
+
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/linearLayout"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:id="@+id/mainLayout">
+    </FrameLayout>
 
 </RelativeLayout>
