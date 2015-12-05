@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import co.flashpick.client.android.R;
+import co.flashpick.client.android.callbacks.FacebookLoginCallback;
 import co.flashpick.client.android.model.AuthenticationManager;
 import com.facebook.*;
 import com.facebook.login.LoginResult;
@@ -36,34 +37,10 @@ public class FacebookLoginFragment extends Fragment {
 
         loginButton.setReadPermissions(permissions);
 
-        loginButton.registerCallback(AuthenticationManager.facebookCallbackManager, new FacebookCallback<LoginResult>() {
-
-            @Override
-            public void onSuccess(LoginResult result) {
-                System.out.println("success");
-                sendLoginRequest();
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-                System.out.println("error");
-            }
-
-            @Override
-            public void onCancel() {
-                System.out.println("cancel");
-            }
-        });
+        loginButton.registerCallback(AuthenticationManager.facebookCallbackManager, new FacebookLoginCallback());
 
         setupDebugButton();
         return view;
-    }
-
-    private void sendLoginRequest() {
-        if(AuthenticationManager.facebookUserId == null && com.facebook.AccessToken.getCurrentAccessToken() != null) {
-            AuthenticationManager.facebookUserId = com.facebook.AccessToken.getCurrentAccessToken().getUserId();
-        }
-        AuthenticationManager.authenticateThroughFacebook();
     }
 
     private void setupDebugButton() {
