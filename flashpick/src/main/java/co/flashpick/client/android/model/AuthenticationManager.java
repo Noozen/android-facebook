@@ -3,13 +3,10 @@ package co.flashpick.client.android.model;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import co.flashpick.client.android.callbacks.FlashpickLoginCallback;
 import com.android.volley.*;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import org.json.JSONException;
@@ -35,12 +32,12 @@ public class AuthenticationManager {
         return FLASHPICK_SERVLET_ADDRESS + "mobileFBAuth?accessToken=" + AccessToken.getCurrentAccessToken().getToken();
     }
 
-    private static String getAuthenticatedRequestUrl(String url) {
-        return FLASHPICK_SERVLET_ADDRESS + url + "?accessToken=" + AccessToken.getCurrentAccessToken().getToken();
+    private static String getRequestUrl(String url) {
+        return FLASHPICK_SERVLET_ADDRESS + url + "?";
     }
 
-    public static String authenticateThroughFacebook() {
-        return authenticateThroughFacebook(new FlashpickLoginCallback() {
+    public static void authenticateThroughFacebook() {
+        authenticateThroughFacebook(new FlashpickLoginCallback() {
             @Override
             public void callback() {
 
@@ -48,7 +45,7 @@ public class AuthenticationManager {
         });
     }
 
-    public static String authenticateThroughFacebook(final FlashpickLoginCallback callback) {
+    public static void authenticateThroughFacebook(final FlashpickLoginCallback callback) {
         JsonObjectRequest facebookAuthRequest = new JsonObjectRequest(Request.Method.GET, getFacebookAuthUrlWithParam(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -68,7 +65,6 @@ public class AuthenticationManager {
             }
         });
         requestQueue.add(facebookAuthRequest);
-        return jwtToken;
     }
 
     private static void saveFlashpickToken() {
@@ -88,7 +84,7 @@ public class AuthenticationManager {
         if (queryParams == null)
             queryParams = new HashMap<String, String>();
 
-        String requestBuilder = getAuthenticatedRequestUrl(url);
+        String requestBuilder = getRequestUrl(url);
         for (Map.Entry<String, String> entry : queryParams.entrySet()) {
             requestBuilder = requestBuilder + "&" + entry.getKey() + "=" + entry.getValue();
         }
