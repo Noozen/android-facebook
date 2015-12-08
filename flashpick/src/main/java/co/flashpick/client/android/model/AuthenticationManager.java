@@ -54,6 +54,7 @@ public class AuthenticationManager {
             public void onResponse(JSONObject response) {
                 try {
                     jwtToken = response.getString("token");
+                    saveFlashpickToken();
                     callback.callback();
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing successful mobileFBAuth response!");
@@ -67,7 +68,6 @@ public class AuthenticationManager {
             }
         });
         requestQueue.add(facebookAuthRequest);
-        saveFlashpickToken();
         return jwtToken;
     }
 
