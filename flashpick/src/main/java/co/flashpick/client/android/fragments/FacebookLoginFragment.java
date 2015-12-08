@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import co.flashpick.client.android.R;
 import co.flashpick.client.android.callbacks.FacebookLoginCallback;
-import co.flashpick.client.android.callbacks.FlashpickLoginCallback;
 import co.flashpick.client.android.model.AuthenticationManager;
 import com.facebook.*;
 import com.facebook.login.LoginResult;
@@ -49,13 +48,9 @@ public class FacebookLoginFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AuthenticationManager.authenticateThroughFacebook(new FlashpickLoginCallback() {
-                    @Override
-                    public void callback() {
-                        TextView textView = (TextView) view.findViewById(R.id.textViewJWToken);
-                        textView.setText(AuthenticationManager.jwtToken);
-                    }
-                });
+                AuthenticationManager.authenticateThroughFacebook();
+                TextView textView = (TextView) view.findViewById(R.id.textViewJWToken);
+                textView.setText(AuthenticationManager.jwtToken);
             }
         });
     }

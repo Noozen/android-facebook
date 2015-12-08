@@ -59,5 +59,7 @@ dependencies {
         exclude module: 'support-v4'
     }
     compile 'com.mcxiaoke.volley:library:1.0.19'
+    compile 'org.springframework.android:spring-android-rest-template:2.0.0.M3'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.6.3'
 
 }
