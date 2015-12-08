@@ -11,10 +11,10 @@ import co.flashpick.client.android.callbacks.FacebookLoginCallback;
 import co.flashpick.client.android.fragments.FacebookLoginFragment;
 import co.flashpick.client.android.fragments.MainFragment;
 import co.flashpick.client.android.model.AuthenticationManager;
+import com.android.volley.toolbox.Volley;
 import com.facebook.*;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
 
 import java.util.Arrays;
 
@@ -23,24 +23,27 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AuthenticationManager.activityContext = this;
-
+        setupAuthenticationManager();
         setupFacebook();
 
         setContentView(R.layout.activity_main);
         setupMainMenuListeners();
 
-        setupFlashpickToken();
+        authenticateUser();
     }
 
-    private void setupFlashpickToken () {
+    private void setupAuthenticationManager() {
+        AuthenticationManager.activityContext = this;
+        AuthenticationManager.requestQueue = Volley.newRequestQueue(this);
+    }
+
+    private void authenticateUser() {
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         AuthenticationManager.jwtToken = sharedPref.getString("FLASHPICK_TOKEN","NULL");
-        if(AuthenticationManager.jwtToken == "NULL" && AccessToken.getCurrentAccessToken() != null) {
+        if(AccessToken.getCurrentAccessToken() != null) {
             AuthenticationManager.authenticateThroughFacebook();
         }
-        if(AuthenticationManager.jwtToken == "NULL" && AccessToken.getCurrentAccessToken() == null) {
-            LoginManager.getInstance().registerCallback(AuthenticationManager.facebookCallbackManager, new FacebookLoginCallback());
+        if(AccessToken.getCurrentAccessToken() == null) {
             LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email", "user_friends"));
         }
     }
@@ -49,6 +52,7 @@ public class MainActivity extends Activity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         FacebookSdk.addLoggingBehavior(LoggingBehavior.INCLUDE_ACCESS_TOKENS);
         AuthenticationManager.facebookCallbackManager = CallbackManager.Factory.create();
+        LoginManager.getInstance().registerCallback(AuthenticationManager.facebookCallbackManager, new FacebookLoginCallback());
     }
 
     private void setupMainMenuListeners() {

@@ -3,12 +3,17 @@ package co.flashpick.client.android.model;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
+import co.flashpick.client.android.callbacks.FlashpickLoginCallback;
+import com.android.volley.*;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
-import org.springframework.http.*;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,71 +23,81 @@ import java.util.Map;
  */
 public class AuthenticationManager {
 
-    public static String FLASHPICK_SERVLET_ADDRESS = "http://192.168.0.10:8080/flashpick-server-services-ws/";
+    final private static String TAG = "AuthenticationManager";
+    final private static String FLASHPICK_SERVLET_ADDRESS = "http://192.168.0.10:8080/flashpick-server-services-ws/";
 
     public static Activity activityContext;
-    public static String facebookUserId;
     public static String jwtToken;
     public static CallbackManager facebookCallbackManager;
-    public static RestTemplate restTemplate = new RestTemplate();
+    public static RequestQueue requestQueue;
 
-    private static String responseHelper;
-
-    public static String getFacebookAuthUrlWithParam() {
+    private static String getFacebookAuthUrlWithParam() {
         return FLASHPICK_SERVLET_ADDRESS + "mobileFBAuth?accessToken=" + AccessToken.getCurrentAccessToken().getToken();
     }
 
+    private static String getAuthenticatedRequestUrl(String url) {
+        return FLASHPICK_SERVLET_ADDRESS + url + "?accessToken=" + AccessToken.getCurrentAccessToken().getToken();
+    }
+
     public static String authenticateThroughFacebook() {
-        if(AuthenticationManager.facebookUserId == null && AccessToken.getCurrentAccessToken() != null) {
-            AuthenticationManager.facebookUserId = AccessToken.getCurrentAccessToken().getUserId();
-        }
-        Thread thread = new Thread(new Runnable() {
+        return authenticateThroughFacebook(new FlashpickLoginCallback() {
             @Override
-            public void run() {
-                ResponseEntity<JWToken> answer = restTemplate.getForEntity(getFacebookAuthUrlWithParam(), JWToken.class);
-                jwtToken = answer.getBody().getToken();
+            public void callback() {
+
             }
         });
-        thread.start();
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            Log.e("FacebookAuthentication","Server response was not successfull!");
-        }
+    }
+
+    public static String authenticateThroughFacebook(final FlashpickLoginCallback callback) {
+        JsonObjectRequest facebookAuthRequest = new JsonObjectRequest(Request.Method.GET, getFacebookAuthUrlWithParam(), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    jwtToken = response.getString("token");
+                    callback.callback();
+                } catch (JSONException e) {
+                    Log.e(TAG, "Error parsing successful mobileFBAuth response!");
+                }
+            }
+
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Failed authorization at mobileFBAuth!");
+            }
+        });
+        requestQueue.add(facebookAuthRequest);
+        saveFlashpickToken();
+        return jwtToken;
+    }
+
+    private static void saveFlashpickToken() {
         SharedPreferences sharedPref = activityContext.getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("FLASHPICK_TOKEN", jwtToken);
         editor.commit();
-
-        return jwtToken;
     }
 
-    public static String greeting() {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpHeaders headers = new HttpHeaders();
-                headers.set("Authorization", "Bearer " + jwtToken);
-                HttpEntity entity = new HttpEntity(headers);
+    public static void request(int method, String url, JSONObject jsonObject, Map<String, String> headers, Map<String, String> queryParams, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        if (headers == null)
+            headers = new HashMap<String, String>();
 
-                UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(FLASHPICK_SERVLET_ADDRESS + "greeting")
-                        .queryParam("name", "Android");
+        headers.put("Authorization", "Bearer " + jwtToken);
+        final Map<String, String> finalHeaders = headers;
 
-                ResponseEntity<String> responseEntity = restTemplate.exchange(builder.build().encode().toUri(), HttpMethod.GET, entity, String.class);
-                responseHelper = responseEntity.getBody();
-                if(responseEntity.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-                    authenticateThroughFacebook();
-                    responseEntity = restTemplate.exchange(builder.build().encode().toUri(), HttpMethod.GET, entity, String.class);
-                    responseHelper = responseEntity.getBody();
-                }
-            }
-        });
-        thread.start();
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            Log.e("Greeting Request","Server response was not successfull!");
+        if (queryParams == null)
+            queryParams = new HashMap<String, String>();
+
+        String requestBuilder = getAuthenticatedRequestUrl(url);
+        for (Map.Entry<String, String> entry : queryParams.entrySet()) {
+            requestBuilder = requestBuilder + "&" + entry.getKey() + "=" + entry.getValue();
         }
-        return responseHelper;
+        JsonObjectRequest anyAuthenticatedRequest = new JsonObjectRequest(method, requestBuilder, jsonObject, listener, errorListener) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return finalHeaders;
+            }
+        };
+        requestQueue.add(anyAuthenticatedRequest);
     }
 }
