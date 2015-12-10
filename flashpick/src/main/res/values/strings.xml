@@ -1,11 +1,8 @@
 <resources>
-    <string name="app_name">Flashpick</string>
+    <string name="app_name" translatable="false">Flashpick</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="facebook_app_id">1633003896951106</string>
+    <string name="facebook_app_id" translatable="false">1633003896951106</string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_main2">Main2Activity</string>
 </resources>

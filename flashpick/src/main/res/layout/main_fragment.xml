@@ -6,7 +6,7 @@
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="greeting"
+            android:text="@string/hello_world"
             android:id="@+id/buttonGreeting"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
@@ -19,6 +19,6 @@
             android:text="Small Text"
             android:id="@+id/textViewGreeting"
             android:layout_below="@+id/buttonGreeting"
-            android:layout_alignRight="@+id/buttonGreeting"
-            android:layout_alignEnd="@+id/buttonGreeting"/>
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"/>
 </RelativeLayout>

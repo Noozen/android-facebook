@@ -1,6 +1,7 @@
 package co.flashpick.client.android.fragments;
 
 import android.app.Fragment;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import co.flashpick.client.android.R;
 import co.flashpick.client.android.callbacks.FacebookLoginCallback;
 import co.flashpick.client.android.callbacks.FlashpickLoginCallback;
+import co.flashpick.client.android.model.AndroidHelper;
 import co.flashpick.client.android.model.AuthenticationManager;
 import com.facebook.*;
 import com.facebook.login.LoginResult;
@@ -17,6 +19,7 @@ import com.facebook.login.widget.LoginButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Miko on 2015-12-05.
@@ -58,5 +61,15 @@ public class FacebookLoginFragment extends Fragment {
                 });
             }
         });
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (AndroidHelper.locale != null) {
+            newConfig.locale = AndroidHelper.locale;
+            Locale.setDefault(AndroidHelper.locale);
+            getResources().updateConfiguration(newConfig, getResources().getDisplayMetrics());
+        }
     }
 }

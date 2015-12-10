@@ -1,6 +1,7 @@
 package co.flashpick.client.android.fragments;
 
 import android.app.Fragment;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import co.flashpick.client.android.R;
+import co.flashpick.client.android.model.AndroidHelper;
 import co.flashpick.client.android.model.AuthenticationManager;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -17,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -58,5 +61,15 @@ public class MainFragment extends Fragment {
                 });
             }
         });
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (AndroidHelper.locale != null) {
+            newConfig.locale = AndroidHelper.locale;
+            Locale.setDefault(AndroidHelper.locale);
+            getResources().updateConfiguration(newConfig, getResources().getDisplayMetrics());
+        }
     }
 }
