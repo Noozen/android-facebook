@@ -1,6 +1,5 @@
 package co.flashpick.client.android.model;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -23,7 +22,6 @@ public class AuthenticationManager {
     final private static String TAG = "AuthenticationManager";
     final private static String FLASHPICK_SERVLET_ADDRESS = "http://192.168.0.10:8080/flashpick-server-services-ws/";
 
-    public static Activity activityContext;
     public static String jwtToken;
     public static CallbackManager facebookCallbackManager;
     public static RequestQueue requestQueue;
@@ -68,7 +66,7 @@ public class AuthenticationManager {
     }
 
     private static void saveFlashpickToken() {
-        SharedPreferences sharedPref = activityContext.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = AndroidHelper.activityContext.getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("FLASHPICK_TOKEN", jwtToken);
         editor.commit();

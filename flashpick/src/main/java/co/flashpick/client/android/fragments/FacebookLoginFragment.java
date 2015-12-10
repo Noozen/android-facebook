@@ -62,14 +62,4 @@ public class FacebookLoginFragment extends Fragment {
             }
         });
     }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (AndroidHelper.locale != null) {
-            newConfig.locale = AndroidHelper.locale;
-            Locale.setDefault(AndroidHelper.locale);
-            getResources().updateConfiguration(newConfig, getResources().getDisplayMetrics());
-        }
-    }
 }

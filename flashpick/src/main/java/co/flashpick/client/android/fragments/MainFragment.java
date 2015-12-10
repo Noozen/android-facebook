@@ -29,6 +29,7 @@ import java.util.Map;
 public class MainFragment extends Fragment {
 
     final private String TAG = "MainFragment";
+    final private MainFragment thisFragment = this;
 
     public View view;
 
@@ -36,7 +37,26 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.main_fragment, container, false);
         setupGreetingButton();
+        setupLocaleButtons();
         return view;
+    }
+
+    private void setupLocaleButtons() {
+        Button button = (Button) view.findViewById(R.id.localeEN);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AndroidHelper.changeLanguage("en", thisFragment);
+            }
+        });
+
+        Button button2 = (Button) view.findViewById(R.id.localePL);
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AndroidHelper.changeLanguage("pl", thisFragment);
+            }
+        });
     }
 
     private void setupGreetingButton() {
@@ -61,15 +81,5 @@ public class MainFragment extends Fragment {
                 });
             }
         });
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (AndroidHelper.locale != null) {
-            newConfig.locale = AndroidHelper.locale;
-            Locale.setDefault(AndroidHelper.locale);
-            getResources().updateConfiguration(newConfig, getResources().getDisplayMetrics());
-        }
     }
 }

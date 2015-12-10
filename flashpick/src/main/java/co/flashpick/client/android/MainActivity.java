@@ -8,12 +8,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ImageButton;
 import co.flashpick.client.android.callbacks.FacebookLoginCallback;
 import co.flashpick.client.android.fragments.FacebookLoginFragment;
 import co.flashpick.client.android.fragments.MainFragment;
+import co.flashpick.client.android.fragments.SettingsFragment;
 import co.flashpick.client.android.model.AndroidHelper;
 import co.flashpick.client.android.model.AuthenticationManager;
 import com.android.volley.toolbox.Volley;
@@ -29,33 +29,23 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setupAndroidHelper();
         setupAuthenticationManager();
+
         setupFacebook();
 
         setContentView(R.layout.activity_main);
         setupMainMenuListeners();
 
         authenticateUser();
-        changeLanguage();
+        AndroidHelper.changeLanguage("pl", null);
     }
 
-    private void changeLanguage() {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-
-        Configuration config = getBaseContext().getResources().getConfiguration();
-
-        String lang = "pl_pl";
-        if (! "".equals(lang) && ! config.locale.getLanguage().equals(lang))
-        {
-            AndroidHelper.locale = new Locale(lang);
-            Locale.setDefault(AndroidHelper.locale);
-            config.locale = AndroidHelper.locale;
-            getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
-        }
+    private void setupAndroidHelper() {
+        AndroidHelper.activityContext = this;
     }
 
     private void setupAuthenticationManager() {
-        AuthenticationManager.activityContext = this;
         AuthenticationManager.requestQueue = Volley.newRequestQueue(this);
     }
 
@@ -95,6 +85,15 @@ public class MainActivity extends Activity {
                 getFragmentManager().beginTransaction().replace(R.id.mainLayout, fragment, "FACEBOOK_LOGIN_FRAGMENT").commit();
             }
         });
+
+        ImageButton settingsFragmentButton = (ImageButton) findViewById(R.id.settingsButton);
+        settingsFragmentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SettingsFragment fragment = new SettingsFragment();
+                getFragmentManager().beginTransaction().replace(R.id.mainLayout, fragment, "SETTINGS_FRAGMENT").commit();
+            }
+        });
     }
 
     @Override
@@ -132,18 +131,6 @@ public class MainActivity extends Activity {
             newConfig.locale = AndroidHelper.locale;
             Locale.setDefault(AndroidHelper.locale);
             getBaseContext().getResources().updateConfiguration(newConfig, getBaseContext().getResources().getDisplayMetrics());
-
-            Fragment currentFragment = getFragmentManager().findFragmentByTag("FACEBOOK_LOGIN_FRAGMENT");
-            FragmentTransaction fragTransaction = getFragmentManager().beginTransaction();
-            fragTransaction.detach(currentFragment);
-            fragTransaction.attach(currentFragment);
-            fragTransaction.commit();
-
-            currentFragment = getFragmentManager().findFragmentByTag("MAIN_FRAGMENT");
-            fragTransaction = getFragmentManager().beginTransaction();
-            fragTransaction.detach(currentFragment);
-            fragTransaction.attach(currentFragment);
-            fragTransaction.commit();
         }
     }
 }
