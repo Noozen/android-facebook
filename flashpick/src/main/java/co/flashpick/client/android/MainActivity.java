@@ -16,6 +16,7 @@ import co.flashpick.client.android.fragments.MainFragment;
 import co.flashpick.client.android.fragments.SettingsFragment;
 import co.flashpick.client.android.model.AndroidHelper;
 import co.flashpick.client.android.model.AuthenticationManager;
+import co.flashpick.client.android.model.UserSettings;
 import com.android.volley.toolbox.Volley;
 import com.facebook.*;
 import com.facebook.appevents.AppEventsLogger;
@@ -38,6 +39,8 @@ public class MainActivity extends Activity {
         setupMainMenuListeners();
 
         authenticateUser();
+
+        UserSettings.language = "pl";
         AndroidHelper.changeLanguage("pl", null);
     }
 

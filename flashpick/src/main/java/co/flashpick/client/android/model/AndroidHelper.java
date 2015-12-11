@@ -33,5 +33,7 @@ public class AndroidHelper {
                 fragTransaction.commit();
             }
         }
+
+        UserSettings.language = lang;
     }
 }
