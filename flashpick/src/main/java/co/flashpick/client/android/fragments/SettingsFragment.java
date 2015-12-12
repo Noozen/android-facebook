@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.*;
 import co.flashpick.client.android.R;
 import co.flashpick.client.android.model.AndroidHelper;
-import co.flashpick.client.android.model.UserSettings;
+import co.flashpick.client.android.model.UserData;
 
 /**
  * Created by Miko on 2015-12-05.
@@ -64,7 +64,7 @@ public class SettingsFragment extends Fragment {
     }
 
     private void setRememberedLanguageSelection() {
-        switch(UserSettings.language) {
+        switch(UserData.language) {
             case "en":
                 spinner.setSelection(0);
                 break;

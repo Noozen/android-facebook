@@ -8,9 +8,13 @@ import com.android.volley.*;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.JWTParser;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,6 +54,7 @@ public class AuthenticationManager {
                 try {
                     jwtToken = response.getString("token");
                     saveFlashpickToken();
+                    saveUsername();
                     callback.callback();
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing successful mobileFBAuth response!");
@@ -63,6 +68,16 @@ public class AuthenticationManager {
             }
         });
         requestQueue.add(facebookAuthRequest);
+    }
+
+    private static void saveUsername() {
+        try {
+            JWT jwt = JWTParser.parse(jwtToken);
+            JWTClaimsSet claimsSet = jwt.getJWTClaimsSet();
+            UserData.userId = claimsSet.getSubject();
+        } catch (ParseException e) {
+            Log.e(TAG, "Parsing JWT failed.");
+        }
     }
 
     private static void saveFlashpickToken() {

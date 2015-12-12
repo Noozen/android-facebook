@@ -1,8 +1,6 @@
 package co.flashpick.client.android;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,7 +14,7 @@ import co.flashpick.client.android.fragments.MainFragment;
 import co.flashpick.client.android.fragments.SettingsFragment;
 import co.flashpick.client.android.model.AndroidHelper;
 import co.flashpick.client.android.model.AuthenticationManager;
-import co.flashpick.client.android.model.UserSettings;
+import co.flashpick.client.android.model.UserData;
 import com.android.volley.toolbox.Volley;
 import com.facebook.*;
 import com.facebook.appevents.AppEventsLogger;
@@ -40,8 +38,7 @@ public class MainActivity extends Activity {
 
         authenticateUser();
 
-        UserSettings.language = "pl";
-        AndroidHelper.changeLanguage("pl", null);
+        UserData.language = "en";
     }
 
     private void setupAndroidHelper() {

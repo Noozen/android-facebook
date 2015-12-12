@@ -1,7 +1,6 @@
 package co.flashpick.client.android.fragments;
 
 import android.app.Fragment;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +11,7 @@ import android.widget.TextView;
 import co.flashpick.client.android.R;
 import co.flashpick.client.android.model.AndroidHelper;
 import co.flashpick.client.android.model.AuthenticationManager;
+import co.flashpick.client.android.model.UserData;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -19,7 +19,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -36,7 +35,7 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.main_fragment, container, false);
-        setupGreetingButton();
+        getEmailAddress();
         setupLocaleButtons();
         return view;
     }
@@ -59,24 +58,27 @@ public class MainFragment extends Fragment {
         });
     }
 
-    private void setupGreetingButton() {
+    private void getEmailAddress() {
         Button button = (Button) view.findViewById(R.id.buttonGreeting);
-        final Map<String, String> queryMap = new HashMap<String, String>();
-        queryMap.put("name", "Android");
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AuthenticationManager.request(Request.Method.GET, "greeting", null, null, queryMap, new Response.Listener<JSONObject>() {
+                AuthenticationManager.request(Request.Method.GET, "profiles/" + UserData.userId, null, null, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         TextView textView = (TextView) view.findViewById(R.id.textViewGreeting);
-                        textView.setText(response.toString());
+                        try {
+                            textView.setText(response.getJSONObject("user").getString("email"));
+                        } catch (JSONException e) {
+                            Log.e(TAG,"Failed while parsing JSONObject response.", e);
+                        }
                     }
 
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, "Failed authorization at \"greeting\"!");
+                        //TODO:Badac zwracany status http
+                        Log.e(TAG, "Failed request at profiles/{userid}",error);
                     }
                 });
             }

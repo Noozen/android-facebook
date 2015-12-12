@@ -3,16 +3,21 @@ package co.flashpick.client.android.model;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.preference.PreferenceManager;
+import android.util.Log;
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.JWTParser;
 
+import java.text.ParseException;
 import java.util.Locale;
 
 /**
  * Created by Miko on 2015-12-10.
  */
 public class AndroidHelper {
+
+    final private static String TAG = "AndroidHelper";
     public static Locale locale;
     public static Activity activityContext;
 
@@ -34,6 +39,6 @@ public class AndroidHelper {
             }
         }
 
-        UserSettings.language = lang;
+        UserData.language = lang;
     }
 }
