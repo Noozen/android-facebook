@@ -31,7 +31,7 @@ public class AuthenticationManager {
     public static RequestQueue requestQueue;
 
     private static String getFacebookAuthUrlWithParam() {
-        return FLASHPICK_SERVLET_ADDRESS + "mobileFBAuth?accessToken=" + AccessToken.getCurrentAccessToken().getToken();
+        return FLASHPICK_SERVLET_ADDRESS + "profiles?accessToken=" + AccessToken.getCurrentAccessToken().getToken();
     }
 
     private static String getRequestUrl(String url) {
@@ -48,7 +48,7 @@ public class AuthenticationManager {
     }
 
     public static void authenticateThroughFacebook(final FlashpickLoginCallback callback) {
-        JsonObjectRequest facebookAuthRequest = new JsonObjectRequest(Request.Method.GET, getFacebookAuthUrlWithParam(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest facebookAuthRequest = new JsonObjectRequest(Request.Method.POST, getFacebookAuthUrlWithParam(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
