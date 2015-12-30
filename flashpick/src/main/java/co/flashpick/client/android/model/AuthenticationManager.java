@@ -53,6 +53,7 @@ public class AuthenticationManager {
             public void onResponse(JSONObject response) {
                 try {
                     jwtToken = response.getString("token");
+                    System.out.println(jwtToken);
                     saveFlashpickToken();
                     saveUsername();
                     callback.callback();
