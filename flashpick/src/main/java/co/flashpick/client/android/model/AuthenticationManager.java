@@ -31,7 +31,7 @@ public class AuthenticationManager {
     public static RequestQueue requestQueue;
 
     private static String getFacebookAuthUrlWithParam() {
-        return FLASHPICK_SERVLET_ADDRESS + "profiles?accessToken=" + AccessToken.getCurrentAccessToken().getToken();
+        return FLASHPICK_SERVLET_ADDRESS + "profiles/me?accessToken=" + AccessToken.getCurrentAccessToken().getToken();
     }
 
     private static String getRequestUrl(String url) {
